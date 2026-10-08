@@ -1,0 +1,783 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Science Carnival Wheel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@babel/standalone@7.26.5/babel.min.js"></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://esm.sh/react@18.3.1",
+          "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
+          "lucide-react": "https://esm.sh/lucide-react@0.468.0?external=react"
+        }
+      }
+    </script>
+    <style>
+      .clip-path-triangle { clip-path: polygon(50% 100%, 0 0, 100% 0); }
+      @keyframes fade-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes bounce-short { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+      @keyframes wiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-8deg); } 75% { transform: rotate(8deg); } }
+      .animate-fade-in { animation: fade-in 300ms ease-out; }
+      .animate-bounce-short { animation: bounce-short 500ms ease-out; }
+      .animate-wiggle { animation: wiggle 700ms ease-in-out infinite; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel" data-type="module" data-presets="react">
+import React, { useState, useEffect } from 'react';
+import { 
+  Trophy, Sparkles, FlaskConical, Target, Dna, 
+  RefreshCw, Award, CheckCircle2, XCircle, 
+  Candy, Play, RotateCcw, User, Star, Laptop, Calculator, Zap, AlertTriangle
+} from 'lucide-react';
+
+const WHEEL_SECTIONS = [
+  { id: 'jackpot', label: 'JACKPOT', icon: Trophy, color: '#fef3c7', accentColor: '#d97706', textColor: '#92400e', weight: 4 },
+  { id: 'double_or_nothing', label: 'DOUBLE OR NOTHING', icon: Zap, color: '#fef08a', accentColor: '#ca8a04', textColor: '#854d0e', weight: 7 },
+  { id: 'try_again', label: 'TRY AGAIN', icon: RefreshCw, color: '#f3f4f6', accentColor: '#4b5563', textColor: '#1f2937', weight: 9 },
+  { id: 'cs', label: 'COMPUTER SCI', icon: Laptop, color: '#e0f2fe', accentColor: '#0284c7', textColor: '#0369a1', weight: 12 },
+  { id: 'math', label: 'MATHEMATICS', icon: Calculator, color: '#fce7f3', accentColor: '#db2777', textColor: '#be185d', weight: 14 },
+  { id: 'chemistry', label: 'CHEMISTRY', icon: FlaskConical, color: '#ffedd5', accentColor: '#c2410c', textColor: '#9a3412', weight: 16 },
+  { id: 'physics', label: 'PHYSICS', icon: Target, color: '#ecfdf5', accentColor: '#047857', textColor: '#065f46', weight: 18 },
+  { id: 'bio', label: 'BIO CHALLENGE', icon: Dna, color: '#f5f3ff', accentColor: '#7c3aed', textColor: '#5b21b6', weight: 20 }
+];
+
+const CHEMISTRY_QUESTIONS = {
+  easy: [
+    { q: "What is the chemical formula for water?", options: ["CO2", "H2O", "NaCl", "O2"], correct: 1, explanation: "Water is composed of two hydrogen atoms and one oxygen atom (H2O)." },
+    { q: "What gas do we exhale when we breathe out?", options: ["Oxygen", "Carbon Dioxide", "Nitrogen", "Helium"], correct: 1, explanation: "Our bodies produce carbon dioxide as a byproduct of cellular respiration." },
+    { q: "What is table salt's chemical name?", options: ["Sodium Chloride", "Sugar", "Calcium Carbonate", "Hydrogen Peroxide"], correct: 0, explanation: "Table salt is chemically known as Sodium Chloride (NaCl)." }
+  ],
+  medium: [
+    { q: "What is the chemical symbol for Gold?", options: ["Ag", "Au", "Pb", "Fe"], correct: 1, explanation: "Au is the chemical symbol for gold, derived from the Latin word 'aurum'." },
+    { q: "Which gas is most abundant in Earth's atmosphere?", options: ["Oxygen", "Carbon Dioxide", "Nitrogen", "Hydrogen"], correct: 2, explanation: "Nitrogen makes up about 78% of Earth's atmosphere." },
+    { q: "What is the pH of a neutral solution like pure water at room temperature?", options: ["0", "7", "14", "5"], correct: 1, explanation: "A pH of 7 represents a perfectly neutral solution on the pH scale." }
+  ],
+  hard: [
+    { q: "Which subatomic particle carries a negative electrical charge?", options: ["Proton", "Neutron", "Electron", "Positron"], correct: 2, explanation: "Electrons are subatomic particles with a negative charge orbiting the nucleus." },
+    { q: "What process converts liquid directly into gas without becoming liquid first?", options: ["Evaporation", "Sublimation", "Condensation", "Melting"], correct: 1, explanation: "Sublimation is the transition directly from solid to gas, like dry ice." },
+    { q: "Which element has the atomic number 1?", options: ["Helium", "Hydrogen", "Carbon", "Oxygen"], correct: 1, explanation: "Hydrogen is the lightest and first element on the periodic table." }
+  ],
+  veryHard: [
+    { q: "What is the common name of sodium bicarbonate?", options: ["Washing soda", "Baking soda", "Bleaching powder", "Quicklime"], correct: 1, explanation: "Sodium bicarbonate (NaHCO3) is commonly known as baking soda." },
+    { q: "Which gas turns lime water milky when passed through it?", options: ["Oxygen", "Carbon dioxide", "Hydrogen", "Nitrogen"], correct: 1, explanation: "Carbon dioxide reacts with lime water to form insoluble calcium carbonate, turning it milky." }
+  ]
+};
+
+const PHYSICS_QUESTIONS = {
+  easy: [
+    { q: "What force pulls objects toward the center of the Earth?", options: ["Magnetism", "Friction", "Gravity", "Tension"], correct: 2, explanation: "Gravity is the fundamental force that attracts objects toward one another." },
+    { q: "Which of these is a source of natural light on Earth?", options: ["The Moon", "A Mirror", "The Sun", "A Glass Window"], correct: 2, explanation: "The Sun is a natural star that generates its own light through nuclear fusion." },
+    { q: "What happens when you drop a feather and a hammer in a vacuum?", options: ["The hammer falls faster", "The feather falls faster", "They fall at the same speed", "They float away"], correct: 2, explanation: "Without air resistance, all objects fall at exactly the same acceleration due to gravity." }
+  ],
+  medium: [
+    { q: "What is the SI unit of electrical resistance?", options: ["Volt", "Ampere", "Ohm", "Watt"], correct: 2, explanation: "The Ohm (Ω) is the standard international unit of electrical resistance." },
+    { q: "Which colour of light has the longest wavelength in the visible spectrum?", options: ["Violet", "Green", "Blue", "Red"], correct: 3, explanation: "Red light has the longest wavelength and lowest frequency in visible light." },
+    { q: "What type of energy does a stretched rubber band store?", options: ["Kinetic energy", "Elastic potential energy", "Thermal energy", "Magnetic energy"], correct: 1, explanation: "Stretching stores elastic potential energy within the material." }
+  ],
+  hard: [
+    { q: "What is the speed of light in a vacuum approximately?", options: ["300,000 km/s", "3,000 km/s", "30,000 km/s", "3,000,000 km/s"], correct: 0, explanation: "Light travels at roughly 300,000 kilometers per second in a vacuum." },
+    { q: "Which law states that every action has an equal and opposite reaction?", options: ["Newton's First Law", "Newton's Second Law", "Newton's Third Law", "Law of Gravitation"], correct: 2, explanation: "Newton's Third Law states that forces always exist in action-reaction pairs." },
+    { q: "What instrument is used to measure atmospheric pressure?", options: ["Thermometer", "Barometer", "Anemometer", "Hygrometer"], correct: 1, explanation: "A barometer is a scientific instrument used to measure atmospheric pressure." }
+  ],
+  veryHard: [
+    { q: "If you double the distance between two masses, what happens to the gravitational force between them?", options: ["It halves", "It quarters (decreases by 4 times)", "It doubles", "It quadruples"], correct: 1, explanation: "Gravitational force follows an inverse square law, so doubling distance reduces force by a factor of 4." },
+    { q: "Which mirror is used as a rear-view mirror in vehicles because it gives an erect and diminished image?", options: ["Concave mirror", "Convex mirror", "Plane mirror", "Parabolic mirror"], correct: 1, explanation: "Convex mirrors always form virtual, erect, and diminished images, providing a wider field of view." }
+  ]
+};
+
+const BIO_QUESTIONS = {
+  easy: [
+    { q: "What organ in the human body pumps blood?", options: ["Brain", "Lungs", "Heart", "Liver"], correct: 2, explanation: "The heart is a muscular organ that circulates blood throughout the body." },
+    { q: "What green pigment do plants use to absorb sunlight?", options: ["Hemoglobin", "Chlorophyll", "Melanin", "Carotene"], correct: 1, explanation: "Chlorophyll captures light energy to fuel photosynthesis in plants." },
+    { q: "How many legs does an insect have?", options: ["4", "6", "8", "10"], correct: 1, explanation: "All adult insects possess exactly six legs divided into three pairs." }
+  ],
+  medium: [
+    { q: "What is the powerhouse of the cell?", options: ["Nucleus", "Ribosome", "Mitochondria", "Golgi Body"], correct: 2, explanation: "Mitochondria generate most of the chemical energy needed to power cellular biochemical reactions." },
+    { q: "Which blood cells are responsible for carrying oxygen throughout the body?", options: ["White blood cells", "Red blood cells", "Platelets", "Plasma"], correct: 1, explanation: "Red blood cells contain hemoglobin, which binds oxygen in the lungs and delivers it." },
+    { q: "What molecule carries genetic instructions in living organisms?", options: ["RNA", "Protein", "DNA", "Lipid"], correct: 2, explanation: "DNA (Deoxyribonucleic Acid) contains the hereditary instructions for development and function." }
+  ],
+  hard: [
+    { q: "What process do plants use to convert sunlight into chemical energy?", options: ["Respiration", "Photosynthesis", "Transpiration", "Fermentation"], correct: 1, explanation: "Photosynthesis converts light energy into chemical energy using carbon dioxide and water." },
+    { q: "Which human organ is primarily responsible for detoxifying chemicals and metabolizing drugs?", options: ["Kidney", "Liver", "Pancreas", "Spleen"], correct: 1, explanation: "The liver detoxifies various metabolites, synthesizes proteins, and produces biochemicals." },
+    { q: "What is the basic structural and functional unit of all living organisms?", options: ["Atom", "Molecule", "Cell", "Tissue"], correct: 2, explanation: "The cell is recognized as the fundamental building block of all living things." }
+  ],
+  veryHard: [
+    { q: "Which part of the human brain controls balance, posture, and coordination?", options: ["Cerebrum", "Cerebellum", "Medulla oblongata", "Hypothalamus"], correct: 1, explanation: "The cerebellum coordinates voluntary movements, balance, and posture." },
+    { q: "What is the gap between two neurons where chemical messages are transmitted called?", options: ["Axon", "Synapse", "Dendrite", "Myelin sheath"], correct: 1, explanation: "A synapse is the junction through which neurons communicate using neurotransmitters." }
+  ]
+};
+
+const CS_QUESTIONS = {
+  easy: [
+    { q: "What does 'CPU' stand for in a computer?", options: ["Central Processing Unit", "Computer Personal Unit", "Central Program Utility", "Control Processing Unit"], correct: 0, explanation: "The CPU is known as the brain of the computer that executes instructions." },
+    { q: "Which of these is an example of an input device?", options: ["Monitor", "Printer", "Keyboard", "Speaker"], correct: 2, explanation: "A keyboard lets you input data and instructions into a computer." },
+    { q: "What symbol is commonly used in programming to mean 'assignment' (store value)?", options: ["==", "=", "===", "!="], correct: 1, explanation: "Single equals '=' is typically used to assign values to variables." }
+  ],
+  medium: [
+    { q: "Which data structure follows the Last-In, First-Out (LIFO) principle?", options: ["Queue", "Stack", "Array", "Tree"], correct: 1, explanation: "A stack operates like a stack of plates where the last item added is the first removed." },
+    { q: "What does HTML stand for?", options: ["Hyper Text Markup Language", "High Tech Multi Language", "Hyper Transfer Machine Language", "Home Tool Markup Language"], correct: 0, explanation: "HTML is the standard markup language for creating web pages." },
+    { q: "Which of these is a compiled programming language?", options: ["Python", "JavaScript", "C++", "HTML"], correct: 2, explanation: "C++ is compiled directly into machine code before execution." }
+  ],
+  hard: [
+    { q: "What is the worst-case time complexity of standard Binary Search on a sorted array?", options: ["O(n)", "O(log n)", "O(n^2)", "O(1)"], correct: 1, explanation: "Binary search divides the search space in half each step, resulting in logarithmic time O(log n)." },
+    { q: "In object-oriented programming, what concept allows a class to inherit properties from another class?", options: ["Encapsulation", "Polymorphism", "Inheritance", "Abstractions"], correct: 2, explanation: "Inheritance enables new classes to adopt attributes and methods of existing classes." },
+    { q: "What protocol is securely used to encrypt web traffic on the internet?", options: ["HTTP", "FTP", "HTTPS", "SMTP"], correct: 2, explanation: "HTTPS (Hypertext Transfer Protocol Secure) encrypts communications using SSL/TLS." }
+  ],
+  veryHard: [
+    { q: "If a loop runs while i < 3 starting at i = 0, how many times will it execute?", options: ["2 times", "3 times", "4 times", "Infinite"], correct: 1, explanation: "It executes when i = 0, 1, and 2, which is exactly 3 times." },
+    { q: "Which of these represents a conditional statement in most programming languages?", options: ["for", "while", "if", "print"], correct: 2, explanation: "An 'if' statement is used to execute code based on whether a condition is true or false." }
+  ]
+};
+
+const MATH_QUESTIONS = {
+  easy: [
+    { q: "What is the value of 7 multiplied by 8?", options: ["54", "56", "64", "48"], correct: 1, explanation: "7 × 8 = 56." },
+    { q: "How many degrees are in a triangle's interior angles?", options: ["90°", "180°", "360°", "270°"], correct: 1, explanation: "The sum of interior angles in any triangle is always 180 degrees." },
+    { q: "What is the square root of 81?", options: ["7", "8", "9", "11"], correct: 2, explanation: "9 × 9 = 81, so the square root of 81 is 9." }
+  ],
+  medium: [
+    { q: "What is the value of Pi (π) rounded to two decimal places?", options: ["3.12", "3.14", "3.16", "3.18"], correct: 1, explanation: "Pi is approximately 3.14159..." },
+    { q: "If a circle has a radius of 5 cm, what is its diameter?", options: ["5 cm", "10 cm", "15 cm", "25 cm"], correct: 1, explanation: "The diameter is always twice the radius (2 × 5 = 10 cm)." },
+    { q: "What is 15% of 200?", options: ["15", "20", "25", "30"], correct: 3, explanation: "15% of 200 is 0.15 × 200 = 30." }
+  ],
+  hard: [
+    { q: "What is the derivative of x^2 with respect to x?", options: ["x", "2x", "x^2", "2"], correct: 1, explanation: "Using the power rule, the derivative of x^n is n*x^(n-1), so d/dx(x^2) = 2x." },
+    { q: "What is the value of 2 to the power of 5 (2^5)?", options: ["16", "32", "64", "10"], correct: 1, explanation: "2 × 2 × 2 × 2 × 2 = 32." },
+    { q: "What is the slope of the line given by equation y = 3x + 4?", options: ["4", "3", "-3", "1/3"], correct: 1, explanation: "In slope-intercept form y = mx + b, 'm' represents the slope, which is 3." }
+  ],
+  veryHard: [
+    { q: "What is the solution for x in the linear equation 2x + 6 = 14?", options: ["x = 2", "x = 4", "x = 7", "x = 10"], correct: 1, explanation: "Subtracting 6 gives 2x = 8, so x = 4." },
+    { q: "What is the area of a rectangle with length 8 cm and breadth 5 cm?", options: ["13 sq cm", "26 sq cm", "40 sq cm", "80 sq cm"], correct: 2, explanation: "Area = length × breadth = 8 × 5 = 40 sq cm." }
+  ]
+};
+
+export default function App() {
+  const [playerName, setPlayerName] = useState('');
+  const [isRegistered, setIsRegistered] = useState(false);
+  const [candies, setCandies] = useState(0);
+  const [spinsLeft, setSpinsLeft] = useState(3);
+  const [currentSpinIndex, setCurrentSpinIndex] = useState(1);
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [rotation, setRotation] = useState(0);
+  const [activeModal, setActiveModal] = useState(null);
+  const [currentQuestion, setCurrentQuestion] = useState(null);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [isAnswerCorrect, setIsAnswerCorrect] = useState(null);
+  const [leaderboard, setLeaderboard] = useState([]);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [sessionCompleted, setSessionCompleted] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('science_carnival_leaderboard');
+    if (saved) {
+      try {
+        setLeaderboard(JSON.parse(saved));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }, []);
+
+  const saveLeaderboard = (newEntry) => {
+    const updated = [...leaderboard, newEntry].sort((a, b) => b.candies - a.candies).slice(0, 5);
+    setLeaderboard(updated);
+    localStorage.setItem('science_carnival_leaderboard', JSON.stringify(updated));
+  };
+
+  const handleStartGame = (e) => {
+    e.preventDefault();
+    if (!playerName.trim()) return;
+    setIsRegistered(true);
+  };
+
+  const selectWeightedWinningIndex = () => {
+    const totalWeight = WHEEL_SECTIONS.reduce((sum, sec) => sum + sec.weight, 0);
+    let randomVal = Math.random() * totalWeight;
+    
+    for (let i = 0; i < WHEEL_SECTIONS.length; i++) {
+      if (randomVal < WHEEL_SECTIONS[i].weight) {
+        return i;
+      }
+      randomVal -= WHEEL_SECTIONS[i].weight;
+    }
+    return 0;
+  };
+
+  const spinWheel = () => {
+    if (isSpinning || spinsLeft <= 0 || sessionCompleted) return;
+
+    setIsSpinning(true);
+    setActiveModal(null);
+    setSelectedAnswer(null);
+    setIsAnswerCorrect(null);
+
+    const sliceAngle = 360 / WHEEL_SECTIONS.length;
+    const winningIndex = selectWeightedWinningIndex();
+    
+    const targetSliceCenter = (winningIndex * sliceAngle) + (sliceAngle / 2);
+    const extraFullSpins = 360 * 6;
+    const newRotation = rotation + extraFullSpins + (360 - (targetSliceCenter + (rotation % 360)) % 360);
+    
+    setRotation(newRotation);
+
+    setTimeout(() => {
+      setIsSpinning(false);
+      const winningSection = WHEEL_SECTIONS[winningIndex];
+      handleWheelOutcome(winningSection.id);
+    }, 4000);
+  };
+
+  const getDifficultyString = () => {
+    if (currentSpinIndex === 1) return 'easy';
+    if (currentSpinIndex === 2) return 'medium';
+    return 'hard';
+  };
+
+  const handleWheelOutcome = (sectionId) => {
+    const diff = getDifficultyString();
+
+    if (sectionId === 'jackpot') {
+      setShowConfetti(true);
+      setCandies(prev => prev + 3);
+      setActiveModal('jackpot');
+      setTimeout(() => setShowConfetti(false), 4000);
+      advanceTurnAfterModal(3);
+    } else if (sectionId === 'try_again') {
+      setActiveModal('try_again');
+    } else if (sectionId === 'double_or_nothing') {
+      setActiveModal('double_prompt');
+    } else {
+      let qList = CHEMISTRY_QUESTIONS[diff];
+      let typeName = 'Chemistry Challenge';
+      if (sectionId === 'physics') {
+        qList = PHYSICS_QUESTIONS[diff];
+        typeName = 'Physics Challenge';
+      } else if (sectionId === 'bio') {
+        qList = BIO_QUESTIONS[diff];
+        typeName = 'Bio Challenge';
+      } else if (sectionId === 'cs') {
+        qList = CS_QUESTIONS[diff];
+        typeName = 'Computer Science Challenge';
+      } else if (sectionId === 'math') {
+        qList = MATH_QUESTIONS[diff];
+        typeName = 'Mathematics Challenge';
+      }
+
+      const randomQ = qList[Math.floor(Math.random() * qList.length)];
+      setCurrentQuestion({ ...randomQ, type: typeName, category: sectionId });
+      setActiveModal('question');
+    }
+  };
+
+  const handleDoubleOrNothingChoice = (choice) => {
+    if (!choice) {
+      setActiveModal(null);
+      advanceTurnAfterModal();
+    } else {
+      const subjectPool = [
+        { list: CHEMISTRY_QUESTIONS.veryHard, name: 'Very Hard Chemistry Challenge' },
+        { list: PHYSICS_QUESTIONS.veryHard, name: 'Very Hard Physics Challenge' },
+        { list: BIO_QUESTIONS.veryHard, name: 'Very Hard Bio Challenge' },
+        { list: CS_QUESTIONS.veryHard, name: 'Very Hard Computer Science Challenge' },
+        { list: MATH_QUESTIONS.veryHard, name: 'Very Hard Mathematics Challenge' }
+      ];
+      const randomSubj = subjectPool[Math.floor(Math.random() * subjectPool.length)];
+      const randomQ = randomSubj.list[Math.floor(Math.random() * randomSubj.list.length)];
+      
+      setCurrentQuestion({ ...randomQ, type: randomSubj.name, category: 'double_or_nothing', isDouble: true });
+      setActiveModal('double_question');
+      setSelectedAnswer(null);
+      setIsAnswerCorrect(null);
+    }
+  };
+
+  const advanceTurnAfterModal = (candyDelta = 0, bonusSpin = false) => {
+    const nextSpinCount = spinsLeft - 1 + (bonusSpin ? 1 : 0);
+    setSpinsLeft(nextSpinCount);
+    const nextIndex = currentSpinIndex + 1;
+    setCurrentSpinIndex(nextIndex);
+
+    if (nextSpinCount <= 0) {
+      setSessionCompleted(true);
+      saveLeaderboard({ name: playerName, candies: candies + candyDelta });
+    }
+  };
+
+  const handleAnswerSelect = (optionIndex) => {
+    if (selectedAnswer !== null) return;
+    setSelectedAnswer(optionIndex);
+    const correct = optionIndex === currentQuestion.correct;
+    setIsAnswerCorrect(correct);
+
+    if (correct) {
+      if (currentQuestion.isDouble) {
+        setCandies(prev => (prev === 0 ? 2 : prev * 2));
+      } else {
+        setCandies(prev => prev + 1);
+      }
+    } else {
+      if (currentQuestion.isDouble) {
+        setCandies(0);
+      }
+    }
+  };
+
+  const handleCloseQuestionModal = () => {
+    const candyDelta = currentQuestion.isDouble
+      ? (isAnswerCorrect ? (candies === 0 ? 2 : candies) : -candies)
+      : (isAnswerCorrect ? 1 : 0);
+    setActiveModal(null);
+    setCurrentQuestion(null);
+    advanceTurnAfterModal(candyDelta);
+  };
+
+  const resetGameSession = () => {
+    setCandies(0);
+    setSpinsLeft(3);
+    setCurrentSpinIndex(1);
+    setSessionCompleted(false);
+    setActiveModal(null);
+    setRotation(0);
+    setIsRegistered(false);
+    setPlayerName('');
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-emerald-50 text-slate-800 font-sans p-4 md:p-8 flex flex-col items-center justify-between">
+      
+      {/* Header Banner */}
+      <header className="w-full max-w-5xl bg-white/85 backdrop-blur-md rounded-2xl shadow-sm border border-amber-100 p-4 md:p-6 flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center text-amber-600 shadow-inner">
+            <Sparkles className="w-6 h-6 animate-pulse" />
+          </div>
+          <div>
+            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-amber-700 via-orange-600 to-emerald-700 bg-clip-text text-transparent">
+              SCIENCE CARNIVAL WHEEL
+            </h1>
+            <p className="text-xs md:text-sm font-medium text-slate-500">Interactive Exhibition & Discovery Wheel</p>
+          </div>
+        </div>
+
+        {isRegistered && (
+          <div className="flex items-center gap-4 bg-amber-50/90 border border-amber-200/60 px-5 py-2.5 rounded-xl shadow-sm">
+            <div className="flex items-center gap-2">
+              <User className="w-4 h-4 text-amber-700" />
+              <span className="font-bold text-slate-700">{playerName}</span>
+            </div>
+            <div className="h-4 w-[1px] bg-amber-200" />
+            <div className="flex items-center gap-2">
+              <Candy className="w-5 h-5 text-rose-500 animate-bounce" />
+              <span className="font-extrabold text-rose-600 text-lg">{candies} Candies</span>
+            </div>
+          </div>
+        )}
+      </header>
+
+      {/* Main Content Area */}
+      <main className="w-full max-w-5xl flex-1 flex flex-col items-center justify-center">
+        {!isRegistered ? (
+          <div className="w-full max-w-md bg-white rounded-3xl shadow-xl border border-amber-100 p-8 text-center animate-fade-in">
+            <div className="w-20 h-20 bg-gradient-to-tr from-amber-400 to-orange-400 rounded-2xl mx-auto flex items-center justify-center text-white shadow-lg mb-6 transform rotate-3">
+              <Trophy className="w-10 h-10" />
+            </div>
+            <h2 className="text-2xl font-bold text-slate-800 mb-2">Welcome to the Carnival!</h2>
+            <p className="text-sm text-slate-500 mb-6">Enter your name to begin your 3-spin exhibition challenge and win delicious candies.</p>
+            
+            <form onSubmit={handleStartGame} className="space-y-4">
+              <input
+                type="text"
+                placeholder="Enter visitor or team name..."
+                value={playerName}
+                onChange={(e) => setPlayerName(e.target.value)}
+                className="w-full px-4 py-3.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-400 text-center font-medium bg-slate-50/50"
+                required
+              />
+              <button
+                type="submit"
+                className="w-full py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold rounded-xl shadow-md transition transform active:scale-95 flex items-center justify-center gap-2"
+              >
+                <Play className="w-5 h-5 fill-current" /> Start Challenge
+              </button>
+            </form>
+          </div>
+        ) : sessionCompleted ? (
+          <div className="w-full max-w-xl bg-white rounded-3xl shadow-xl border border-amber-100 p-8 text-center animate-fade-in">
+            <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full mx-auto flex items-center justify-center shadow-inner mb-6">
+              <Award className="w-10 h-10" />
+            </div>
+            <h2 className="text-3xl font-extrabold text-slate-800 mb-2">Challenge Completed!</h2>
+            <p className="text-slate-600 mb-6">Fantastic job, <span className="font-bold text-amber-600">{playerName}</span>! You successfully finished your turns.</p>
+            
+            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 mb-8 inline-block w-full max-w-sm">
+              <p className="text-xs uppercase tracking-wider text-amber-700 font-bold mb-1">Total Reward Earned</p>
+              <div className="flex items-center justify-center gap-2 text-rose-600">
+                <Candy className="w-8 h-8 animate-wiggle" />
+                <span className="text-4xl font-black">{candies} Candies</span>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button
+                onClick={resetGameSession}
+                className="px-6 py-3.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold rounded-xl shadow hover:opacity-90 transition flex items-center justify-center gap-2"
+              >
+                <RotateCcw className="w-5 h-5" /> Next Visitor
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full items-center">
+            
+            {/* Left Info Panel */}
+            <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-sm border border-amber-100 p-6 flex flex-col gap-6">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-wider text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-200">
+                  Spin #{currentSpinIndex}
+                </span>
+                <h3 className="text-xl font-bold text-slate-800 mt-3">Difficulty: <span className="text-orange-600 capitalize">{getDifficultyString()}</span></h3>
+                <p className="text-xs text-slate-500 mt-1">Questions progress from Easy to Hard with each spin!</p>
+              </div>
+
+              <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+                <h4 className="font-bold text-slate-700 text-sm mb-2 flex items-center gap-2">
+                  <Star className="w-4 h-4 text-amber-500" /> Session Status
+                </h4>
+                <div className="flex justify-between items-center text-sm mb-2">
+                  <span className="text-slate-500">Spins Remaining:</span>
+                  <span className="font-bold text-slate-800 bg-white px-2.5 py-1 rounded-lg border border-slate-200">{spinsLeft}</span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-slate-500">Try Again Rule:</span>
+                  <span className="font-bold text-emerald-600">+1 Extra Spin</span>
+                </div>
+              </div>
+
+              <div className="border-t border-slate-100 pt-4">
+                <h4 className="font-bold text-slate-700 text-sm mb-3">Exhibition Leaderboard</h4>
+                {leaderboard.length === 0 ? (
+                  <p className="text-xs text-slate-400 italic bg-slate-50 p-3 rounded-xl border border-slate-100 text-center">No scores recorded yet. Be the first!</p>
+                ) : (
+                  <div className="space-y-2">
+                    {leaderboard.map((entry, index) => (
+                      <div key={index} className="flex items-center justify-between text-sm bg-slate-50/80 px-3 py-2 rounded-xl border border-slate-100">
+                        <div className="flex items-center gap-2">
+                          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${index === 0 ? 'bg-amber-400 text-white' : index === 1 ? 'bg-slate-300 text-white' : index === 2 ? 'bg-amber-700/60 text-white' : 'bg-slate-200 text-slate-600'}`}>
+                            {index + 1}
+                          </span>
+                          <span className="font-medium text-slate-700">{entry.name}</span>
+                        </div>
+                        <div className="flex items-center gap-1 font-bold text-rose-600">
+                          <Candy className="w-3.5 h-3.5" />
+                          <span>{entry.candies}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Center Wheel Stage */}
+            <div className="flex flex-col items-center justify-center lg:col-span-2">
+              <div className="relative w-[340px] h-[340px] md:w-[440px] md:h-[440px] flex items-center justify-center">
+                
+                {/* Pointer at Top */}
+                <div className="absolute -top-4 z-30 w-8 h-10 bg-amber-600 clip-path-triangle shadow-md flex items-start justify-center pt-1 text-white font-bold text-xs">
+                  ▼
+                </div>
+
+                {/* Outer Wheel Rim */}
+                <div className="w-full h-full rounded-full border-8 border-amber-200 shadow-2xl overflow-hidden relative bg-white">
+                  
+                  {/* Wheel Body with 8 Segments */}
+                  <div 
+                    className="w-full h-full rounded-full relative transition-transform duration-[4000ms] cubic-bezier(0.15, 0.85, 0.15, 1)"
+                    style={{ 
+                      transform: `rotate(${rotation}deg)`,
+                      background: 'conic-gradient(#fef3c7 0deg 45deg, #fef08a 45deg 90deg, #f3f4f6 90deg 135deg, #e0f2fe 135deg 180deg, #fce7f3 180deg 225deg, #ffedd5 225deg 270deg, #ecfdf5 270deg 315deg, #f5f3ff 315deg 360deg)'
+                    }}
+                  >
+                    {WHEEL_SECTIONS.map((sec, idx) => {
+                      const sliceAngle = 360 / WHEEL_SECTIONS.length;
+                      const angle = idx * sliceAngle + (sliceAngle / 2);
+                      return (
+                        <div
+                          key={sec.id}
+                          className="absolute w-full h-full flex items-start justify-center pt-5 md:pt-7"
+                          style={{ transform: `rotate(${angle}deg)`, transformOrigin: 'center' }}
+                        >
+                          <div className="flex flex-col items-center text-center max-w-[70px]">
+                            <span className="text-[9px] md:text-[11px] font-extrabold tracking-tight drop-shadow-sm uppercase leading-tight" style={{color: sec.textColor}}>
+                              {sec.label}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Center Hub */}
+                  <div className="absolute inset-0 m-auto w-20 h-20 rounded-full bg-white border-4 border-amber-300 shadow-xl flex items-center justify-center z-20">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-amber-500 to-orange-400 flex items-center justify-center text-white shadow-inner font-bold text-xs">
+                      SPIN
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              {/* Spin Button */}
+              <button
+                onClick={spinWheel}
+                disabled={isSpinning || spinsLeft <= 0}
+                className={`mt-8 px-10 py-4 rounded-2xl font-black text-lg shadow-lg transition transform active:scale-95 flex items-center gap-3 ${
+                  isSpinning || spinsLeft <= 0 
+                    ? 'bg-slate-300 text-slate-500 cursor-not-allowed shadow-none' 
+                    : 'bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 text-white hover:opacity-95 shadow-amber-200'
+                }`}
+              >
+                <Sparkles className="w-6 h-6 animate-spin" />
+                {isSpinning ? 'SPINNING WHEEL...' : 'SPIN THE WHEEL!'}
+              </button>
+            </div>
+
+          </div>
+        )}
+      </main>
+
+      {/* Modals for Outcomes */}
+      {activeModal && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          
+          {/* Jackpot Modal */}
+          {activeModal === 'jackpot' && (
+            <div className="bg-white rounded-3xl shadow-2xl border-4 border-amber-300 max-w-md w-full p-8 text-center animate-bounce-short">
+              <div className="w-20 h-20 bg-amber-100 text-amber-600 rounded-3xl mx-auto flex items-center justify-center mb-4 shadow-inner">
+                <Trophy className="w-10 h-10" />
+              </div>
+              <h3 className="text-3xl font-black text-amber-600 mb-2">JACKPOT!</h3>
+              <p className="text-slate-600 mb-6 font-medium">Incredible luck! You hit the ultimate exhibition prize.</p>
+              
+              <div className="bg-rose-50 border border-rose-200 rounded-2xl p-4 mb-6 flex items-center justify-center gap-3">
+                <Candy className="w-8 h-8 text-rose-500 animate-bounce" />
+                <span className="text-2xl font-extrabold text-rose-600">+3 Candies Won!</span>
+              </div>
+
+              <button
+                onClick={() => setActiveModal(null)}
+                className="w-full py-3.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow transition"
+              >
+                Continue Challenge
+              </button>
+            </div>
+          )}
+
+          {/* Try Again Modal */}
+          {activeModal === 'try_again' && (
+            <div className="bg-white rounded-3xl shadow-2xl border border-slate-200 max-w-md w-full p-8 text-center animate-fade-in">
+              <div className="w-16 h-16 bg-slate-100 text-slate-600 rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-inner">
+                <RefreshCw className="w-8 h-8 animate-spin" />
+              </div>
+              <h3 className="text-2xl font-black text-slate-800 mb-2">TRY AGAIN!</h3>
+              <p className="text-slate-600 mb-6">No candies this time, but you get an extra free spin added to your count!</p>
+              
+              <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-3 mb-6 text-emerald-700 font-bold text-sm">
+                🎁 +1 Bonus Spin Awarded!
+              </div>
+
+              <button
+                onClick={() => {
+                  setActiveModal(null);
+                  advanceTurnAfterModal(0, true);
+                }}
+                className="w-full py-3.5 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl shadow transition"
+              >
+                Spin Again
+              </button>
+            </div>
+          )}
+
+          {/* Double or Nothing Prompt Modal */}
+          {activeModal === 'double_prompt' && (
+            <div className="bg-white rounded-3xl shadow-2xl border-4 border-amber-400 max-w-md w-full p-8 text-center animate-fade-in">
+              <div className="w-16 h-16 bg-amber-100 text-amber-600 rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-inner">
+                <Zap className="w-8 h-8 animate-bounce" />
+              </div>
+              <h3 className="text-2xl font-black text-amber-700 mb-2">DOUBLE OR NOTHING!</h3>
+              <p className="text-slate-700 font-medium mb-6">"Do you want to take up this challenge?"</p>
+              <p className="text-xs text-slate-500 mb-6 bg-amber-50 p-3 rounded-xl border border-amber-200">
+                Warning: If you accept, you will face a higher-level challenge question. Correct answer doubles your candies! Wrong answer loses your candies. If you decline, this spin is wasted.
+              </p>
+
+              <div className="grid grid-cols-2 gap-4">
+                <button
+                  onClick={() => handleDoubleOrNothingChoice(false)}
+                  className="py-3.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl transition"
+                >
+                  No (Pass)
+                </button>
+                <button
+                  onClick={() => handleDoubleOrNothingChoice(true)}
+                  className="py-3.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl shadow transition"
+                >
+                  Yes, Accept!
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Double or Nothing Question Modal */}
+          {activeModal === 'double_question' && currentQuestion && (
+            <div className="bg-white rounded-3xl shadow-2xl border-4 border-rose-400 max-w-lg w-full p-6 md:p-8 animate-fade-in">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-xs font-bold uppercase tracking-wider bg-rose-100 text-rose-700 px-3 py-1 rounded-full flex items-center gap-1">
+                  <AlertTriangle className="w-3.5 h-3.5" /> {currentQuestion.type}
+                </span>
+                <span className="text-xs text-rose-600 font-bold">HIGH STAKES</span>
+              </div>
+
+              <h3 className="text-lg md:text-xl font-bold text-slate-800 mb-6 leading-snug">
+                {currentQuestion.q}
+              </h3>
+
+              <div className="space-y-3 mb-6">
+                {currentQuestion.options.map((opt, idx) => {
+                  let btnStyle = "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100";
+                  if (selectedAnswer !== null) {
+                    if (idx === currentQuestion.correct) {
+                      btnStyle = "bg-emerald-100 border-emerald-400 text-emerald-800 font-bold";
+                    } else if (idx === selectedAnswer) {
+                      btnStyle = "bg-rose-100 border-rose-400 text-rose-800 font-bold";
+                    } else {
+                      btnStyle = "bg-slate-50 border-slate-200 text-slate-400 opacity-50";
+                    }
+                  }
+
+                  return (
+                    <button
+                      key={idx}
+                      onClick={() => handleAnswerSelect(idx)}
+                      disabled={selectedAnswer !== null}
+                      className={`w-full text-left px-4 py-3.5 rounded-xl border transition flex items-center justify-between ${btnStyle}`}
+                    >
+                      <span className="font-medium">{opt}</span>
+                      {selectedAnswer !== null && idx === currentQuestion.correct && (
+                        <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                      )}
+                      {selectedAnswer !== null && idx === selectedAnswer && idx !== currentQuestion.correct && (
+                        <XCircle className="w-5 h-5 text-rose-600" />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {selectedAnswer !== null && (
+                <div className="mb-6 p-4 rounded-xl bg-slate-50 border border-slate-200 text-sm">
+                  <p className="font-bold text-slate-700 mb-1">
+                    {isAnswerCorrect ? '🎉 Correct! Candies DOUBLED!' : '❌ Incorrect! Candies reset to 0.'}
+                  </p>
+                  <p className="text-slate-600">{currentQuestion.explanation}</p>
+                </div>
+              )}
+
+              {selectedAnswer !== null && (
+                <button
+                  onClick={handleCloseQuestionModal}
+                  className="w-full py-3.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:opacity-95 text-white font-bold rounded-xl shadow transition"
+                >
+                  Continue
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* Regular Question Challenge Modal */}
+          {activeModal === 'question' && currentQuestion && (
+            <div className="bg-white rounded-3xl shadow-2xl border border-amber-100 max-w-lg w-full p-6 md:p-8 animate-fade-in">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-xs font-bold uppercase tracking-wider bg-orange-100 text-orange-700 px-3 py-1 rounded-full">
+                  {currentQuestion.type} ({getDifficultyString().toUpperCase()})
+                </span>
+                <span className="text-xs text-slate-400 font-medium">Answer correctly to win 1 Candy</span>
+              </div>
+
+              <h3 className="text-lg md:text-xl font-bold text-slate-800 mb-6 leading-snug">
+                {currentQuestion.q}
+              </h3>
+
+              <div className="space-y-3 mb-6">
+                {currentQuestion.options.map((opt, idx) => {
+                  let btnStyle = "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100";
+                  if (selectedAnswer !== null) {
+                    if (idx === currentQuestion.correct) {
+                      btnStyle = "bg-emerald-100 border-emerald-400 text-emerald-800 font-bold";
+                    } else if (idx === selectedAnswer) {
+                      btnStyle = "bg-rose-100 border-rose-400 text-rose-800 font-bold";
+                    } else {
+                      btnStyle = "bg-slate-50 border-slate-200 text-slate-400 opacity-50";
+                    }
+                  }
+
+                  return (
+                    <button
+                      key={idx}
+                      onClick={() => handleAnswerSelect(idx)}
+                      disabled={selectedAnswer !== null}
+                      className={`w-full text-left px-4 py-3.5 rounded-xl border transition flex items-center justify-between ${btnStyle}`}
+                    >
+                      <span className="font-medium">{opt}</span>
+                      {selectedAnswer !== null && idx === currentQuestion.correct && (
+                        <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                      )}
+                      {selectedAnswer !== null && idx === selectedAnswer && idx !== currentQuestion.correct && (
+                        <XCircle className="w-5 h-5 text-rose-600" />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {selectedAnswer !== null && (
+                <div className="mb-6 p-4 rounded-xl bg-slate-50 border border-slate-200 text-sm">
+                  <p className="font-bold text-slate-700 mb-1">
+                    {isAnswerCorrect ? '🎉 Correct! +1 Candy Earned!' : '❌ Incorrect!'}
+                  </p>
+                  <p className="text-slate-600">{currentQuestion.explanation}</p>
+                </div>
+              )}
+
+              {selectedAnswer !== null && (
+                <button
+                  onClick={handleCloseQuestionModal}
+                  className="w-full py-3.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:opacity-95 text-white font-bold rounded-xl shadow transition"
+                >
+                  Continue
+                </button>
+              )}
+            </div>
+          )}
+
+        </div>
+      )}
+
+      {/* Footer info */}
+      <footer className="w-full max-w-5xl mt-6 text-center text-xs text-slate-400">
+        Science Carnival Wheel Exhibition System • Designed for visitors of all ages
+      </footer>
+
+    </div>
+  );
+}
+
+import { createRoot } from 'react-dom/client';
+createRoot(document.getElementById('root')).render(<App />);
+    </script>
+  </body>
+</html>
