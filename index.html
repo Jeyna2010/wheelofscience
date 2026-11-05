@@ -317,8 +317,7 @@ export default function App() {
 
   const getDifficultyString = () => {
     if (currentSpinIndex === 1) return 'easy';
-    if (currentSpinIndex === 2) return 'medium';
-    return 'hard';
+    return 'medium';
   };
 
   const handleWheelOutcome = (sectionId) => {
@@ -365,11 +364,11 @@ export default function App() {
       advanceTurnAfterModal(candies);
     } else {
       const subjectPool = [
-        { list: CHEMISTRY_QUESTIONS.veryHard, name: 'Very Hard Chemistry Challenge' },
-        { list: PHYSICS_QUESTIONS.veryHard, name: 'Very Hard Physics Challenge' },
-        { list: BIO_QUESTIONS.veryHard, name: 'Very Hard Bio Challenge' },
-        { list: CS_QUESTIONS.veryHard, name: 'Very Hard Computer Science Challenge' },
-        { list: MATH_QUESTIONS.veryHard, name: 'Very Hard Mathematics Challenge' }
+        { list: CHEMISTRY_QUESTIONS.hard, name: 'Hard Chemistry Challenge' },
+        { list: PHYSICS_QUESTIONS.hard, name: 'Hard Physics Challenge' },
+        { list: BIO_QUESTIONS.hard, name: 'Hard Bio Challenge' },
+        { list: CS_QUESTIONS.hard, name: 'Hard Computer Science Challenge' },
+        { list: MATH_QUESTIONS.hard, name: 'Hard Mathematics Challenge' }
       ];
       const randomSubj = subjectPool[Math.floor(Math.random() * subjectPool.length)];
       const randomQ = pickQuestion(randomSubj.list);
@@ -551,7 +550,7 @@ export default function App() {
                   Spin #{currentSpinIndex}
                 </span>
                 <h3 className="text-xl font-bold text-slate-800 mt-3">Difficulty: <span className="text-orange-600 capitalize">{getDifficultyString()}</span></h3>
-                <p className="text-xs text-slate-500 mt-1">Questions progress from Easy to Hard with each spin!</p>
+                <p className="text-xs text-slate-500 mt-1">Questions start Easy and get a little tougher each spin!</p>
               </div>
 
               <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
