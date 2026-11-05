@@ -159,6 +159,187 @@ const MATH_QUESTIONS = {
     { q: "What is the area of a rectangle with length 8 cm and breadth 5 cm?", options: ["13 sq cm", "26 sq cm", "40 sq cm", "80 sq cm"], correct: 2, explanation: "Area = length × breadth = 8 × 5 = 40 sq cm." }
   ]
 };
+      const usedQuestions = new Set();
+function pickQuestion(list) {
+  let pool = list.filter(q => !usedQuestions.has(q.q));
+  if (pool.length === 0) {
+    list.forEach(q => usedQuestions.delete(q.q));
+    pool = list;
+  }
+  const q = pool[Math.floor(Math.random() * pool.length)];
+  usedQuestions.add(q.q);
+  const order = q.options.map((_, i) => i).sort(() => Math.random() - 0.5);
+  return { ...q, options: order.map(i => q.options[i]), correct: order.indexOf(q.correct) };
+}
+ 
+const CHEMISTRY_QUESTIONS = {
+  easy: [
+    { q: "What is the chemical formula for water?", options: ["CO2", "H2O", "NaCl", "O2"], correct: 1, explanation: "Water is two hydrogen atoms and one oxygen atom (H2O)." },
+    { q: "What is the chemical symbol for sodium?", options: ["Na", "So", "S", "Sn"], correct: 0, explanation: "Na comes from the Latin 'natrium'." },
+    { q: "Which of these is a noble gas?", options: ["Oxygen", "Neon", "Chlorine", "Nitrogen"], correct: 1, explanation: "Neon is in Group 18 and is almost completely unreactive." },
+    { q: "At what temperature (°C) does pure water boil at sea level?", options: ["50", "90", "100", "120"], correct: 2, explanation: "Water boils at 100°C at standard atmospheric pressure." },
+    { q: "What is the chemical symbol for iron?", options: ["Ir", "Fe", "I", "In"], correct: 1, explanation: "Fe comes from the Latin 'ferrum'." }
+  ],
+  medium: [
+    { q: "Which acid is found in the human stomach?", options: ["Sulphuric acid", "Hydrochloric acid", "Nitric acid", "Acetic acid"], correct: 1, explanation: "Gastric juice contains hydrochloric acid (HCl)." },
+    { q: "How many protons does a carbon atom have?", options: ["4", "6", "8", "12"], correct: 1, explanation: "Carbon has atomic number 6, so it has 6 protons." },
+    { q: "Which type of bond involves the sharing of electron pairs?", options: ["Ionic", "Covalent", "Metallic", "Van der Waals"], correct: 1, explanation: "Covalent bonds form when atoms share electrons." },
+    { q: "Rusting of iron is an example of which process?", options: ["Physical change", "Oxidation", "Sublimation", "Distillation"], correct: 1, explanation: "Iron reacts with oxygen and water to form iron oxide, a chemical change called oxidation." },
+    { q: "Which element is the most electronegative?", options: ["Oxygen", "Chlorine", "Fluorine", "Nitrogen"], correct: 2, explanation: "Fluorine has the highest electronegativity on the Pauling scale." },
+    { q: "What is the pH range of acidic solutions?", options: ["Below 7", "Exactly 7", "Above 7", "Above 10"], correct: 0, explanation: "Acids have pH below 7; the lower the number, the stronger the acid." }
+  ],
+  hard: [
+    { q: "Which type of electromagnetic radiation has the shortest wavelength?", options: ["Radio waves", "Infrared", "Ultraviolet", "Gamma rays"], correct: 3, explanation: "Gamma rays have the shortest wavelength and highest frequency and energy." },
+    { q: "Which metal ion gives a crimson-red colour in a flame test?", options: ["Sodium", "Lithium", "Potassium", "Copper"], correct: 1, explanation: "Lithium burns crimson; sodium is yellow, potassium lilac and copper blue-green." },
+    { q: "Approximately what is Avogadro's number?", options: ["6.022 × 10^23", "6.022 × 10^32", "3.14 × 10^23", "9.8 × 10^23"], correct: 0, explanation: "One mole contains about 6.022 × 10^23 particles." },
+    { q: "Which law states that at constant temperature the pressure of a gas is inversely proportional to its volume?", options: ["Charles's law", "Boyle's law", "Avogadro's law", "Dalton's law"], correct: 1, explanation: "Boyle's law: P × V = constant at constant temperature." },
+    { q: "What is the oxidation state of manganese in KMnO4?", options: ["+2", "+4", "+7", "+6"], correct: 2, explanation: "K is +1, four O are −8, so Mn must be +7." },
+    { q: "What is the hybridisation of carbon in methane (CH4)?", options: ["sp", "sp2", "sp3", "sp3d"], correct: 2, explanation: "Carbon forms four sigma bonds using one s and three p orbitals, giving sp3." },
+    { q: "A solution of pH 3 has how much more H+ than a solution of pH 5?", options: ["2 times", "100 times", "10 times less", "100 times less"], correct: 1, explanation: "The pH scale is logarithmic: each unit is a factor of 10, so 2 units is 100 times." }
+  ],
+  veryHard: [
+    { q: "How many moles are in 36 g of water (molar mass 18 g/mol)?", options: ["1 mole", "2 moles", "3 moles", "0.5 moles"], correct: 1, explanation: "Moles = mass / molar mass = 36 / 18 = 2." },
+    { q: "In N2 + 3H2 ⇌ 2NH3, increasing the pressure shifts the equilibrium towards...", options: ["Reactants", "Products (ammonia)", "No shift", "Decomposition of NH3"], correct: 1, explanation: "Le Chatelier: pressure favours the side with fewer gas moles (2 vs 4), so more NH3 forms." },
+    { q: "Which pair are isotopes of each other?", options: ["C-12 and C-14", "O2 and O3", "H2O and H2O2", "Na and Na+"], correct: 0, explanation: "Isotopes are atoms of the same element with different neutron numbers." },
+    { q: "Which gas is released when zinc reacts with dilute hydrochloric acid?", options: ["Oxygen", "Hydrogen", "Chlorine", "Carbon dioxide"], correct: 1, explanation: "Zn + 2HCl → ZnCl2 + H2↑ (the 'pop' test confirms hydrogen)." },
+    { q: "What is the IUPAC name of CH3CH2OH?", options: ["Methanol", "Ethanol", "Propanol", "Ethanal"], correct: 1, explanation: "Two carbons with an -OH group make ethanol." }
+  ]
+};
+ 
+const PHYSICS_QUESTIONS = {
+  easy: [
+    { q: "What is the SI unit of force?", options: ["Joule", "Newton", "Watt", "Pascal"], correct: 1, explanation: "Force is measured in newtons (N)." },
+    { q: "Which of these travels fastest?", options: ["Sound", "Light", "Wind", "Water waves"], correct: 1, explanation: "Light travels at about 300,000 km/s, far faster than sound." },
+    { q: "What is the SI unit of mass?", options: ["Gram", "Kilogram", "Newton", "Litre"], correct: 1, explanation: "The kilogram is the SI base unit of mass." },
+    { q: "Which of these is a good conductor of electricity?", options: ["Rubber", "Copper", "Wood", "Glass"], correct: 1, explanation: "Metals like copper have free electrons that carry current." },
+    { q: "What force pulls objects toward the centre of the Earth?", options: ["Magnetism", "Friction", "Gravity", "Tension"], correct: 2, explanation: "Gravity attracts masses toward each other." }
+  ],
+  medium: [
+    { q: "A car moves at a steady 20 m/s for 5 seconds. How far does it travel?", options: ["25 m", "100 m", "4 m", "200 m"], correct: 1, explanation: "Distance = speed × time = 20 × 5 = 100 m." },
+    { q: "Which formula gives kinetic energy?", options: ["mgh", "½mv²", "mv", "F/d"], correct: 1, explanation: "Kinetic energy = ½ × mass × velocity²." },
+    { q: "What does a convex lens do to parallel rays of light?", options: ["Diverges them", "Converges them", "Reflects them", "Absorbs them"], correct: 1, explanation: "A convex lens bends parallel rays to meet at the focus." },
+    { q: "Sound cannot travel through which of these?", options: ["Water", "Steel", "A vacuum", "Air"], correct: 2, explanation: "Sound needs a medium to vibrate; a vacuum has none." },
+    { q: "Which equation represents Ohm's law?", options: ["V = I / R", "V = I × R", "V = I + R", "V = R / I"], correct: 1, explanation: "Voltage equals current times resistance." },
+    { q: "What type of energy does a stretched rubber band store?", options: ["Kinetic energy", "Elastic potential energy", "Thermal energy", "Magnetic energy"], correct: 1, explanation: "Stretching stores elastic potential energy." }
+  ],
+  hard: [
+    { q: "A 2 kg object accelerates at 3 m/s². What is the net force on it?", options: ["1.5 N", "5 N", "6 N", "9 N"], correct: 2, explanation: "Newton's second law: F = ma = 2 × 3 = 6 N." },
+    { q: "Newton's First Law is also known as the law of...", options: ["Inertia", "Gravitation", "Momentum", "Action and reaction"], correct: 0, explanation: "An object keeps its state of motion unless a net force acts on it. That's inertia." },
+    { q: "A ball is thrown straight up. At its highest point, its velocity is...", options: ["Maximum", "Zero", "Equal to g", "Negative maximum"], correct: 1, explanation: "It momentarily stops before falling back, though acceleration is still g downwards." },
+    { q: "Which phenomenon mainly explains why the sky is blue?", options: ["Reflection", "Rayleigh scattering", "Total internal reflection", "Diffraction"], correct: 1, explanation: "Shorter blue wavelengths scatter far more strongly in the atmosphere than red." },
+    { q: "Which colour of visible light has the highest frequency?", options: ["Red", "Green", "Violet", "Yellow"], correct: 2, explanation: "Violet has the shortest wavelength and so the highest frequency." },
+    { q: "What is the momentum of a 5 kg object moving at 4 m/s?", options: ["9 kg·m/s", "20 kg·m/s", "1.25 kg·m/s", "80 kg·m/s"], correct: 1, explanation: "Momentum = mass × velocity = 5 × 4 = 20 kg·m/s." },
+    { q: "Two 4 Ω resistors are connected in parallel. What is the equivalent resistance?", options: ["8 Ω", "4 Ω", "2 Ω", "1 Ω"], correct: 2, explanation: "1/R = 1/4 + 1/4 = 1/2, so R = 2 Ω." }
+  ],
+  veryHard: [
+    { q: "A 10 kg object falls from rest through 20 m (take g = 10 m/s², ignore air). What is its speed just before hitting the ground?", options: ["10 m/s", "20 m/s", "40 m/s", "200 m/s"], correct: 1, explanation: "v = √(2gh) = √(2 × 10 × 20) = 20 m/s." },
+    { q: "Which quantity is conserved in every collision in an isolated system?", options: ["Kinetic energy", "Momentum", "Velocity", "Speed"], correct: 1, explanation: "Momentum is always conserved; kinetic energy is lost in inelastic collisions." },
+    { q: "How much work does the centripetal force do on an object in uniform circular motion?", options: ["Positive", "Negative", "Zero", "Infinite"], correct: 2, explanation: "The force is perpendicular to the motion, so W = Fd cos 90° = 0." },
+    { q: "Total internal reflection can occur when light travels from...", options: ["A rarer to a denser medium at any angle", "A denser to a rarer medium above the critical angle", "A denser to a rarer medium below the critical angle", "Any medium at normal incidence"], correct: 1, explanation: "Light must go from a denser to a rarer medium with an angle of incidence beyond the critical angle." },
+    { q: "Which of these is a longitudinal wave?", options: ["Light", "Sound", "Radio waves", "X-rays"], correct: 1, explanation: "Sound is a compression wave; the others are transverse electromagnetic waves." }
+  ]
+};
+ 
+const BIO_QUESTIONS = {
+  easy: [
+    { q: "Which gas do humans need to breathe in to survive?", options: ["Nitrogen", "Oxygen", "Carbon dioxide", "Helium"], correct: 1, explanation: "Cells use oxygen to release energy from food." },
+    { q: "Which part of a plant absorbs water from the soil?", options: ["Leaves", "Roots", "Flowers", "Stem"], correct: 1, explanation: "Root hairs absorb water and minerals." },
+    { q: "How many chambers does the human heart have?", options: ["2", "3", "4", "5"], correct: 2, explanation: "Two atria and two ventricles." },
+    { q: "Which vitamin does our skin make using sunlight?", options: ["Vitamin A", "Vitamin B12", "Vitamin C", "Vitamin D"], correct: 3, explanation: "Sunlight triggers vitamin D synthesis in the skin." },
+    { q: "What organ in the human body pumps blood?", options: ["Brain", "Lungs", "Heart", "Liver"], correct: 2, explanation: "The heart circulates blood throughout the body." }
+  ],
+  medium: [
+    { q: "Which organelle carries out photosynthesis?", options: ["Mitochondria", "Chloroplast", "Nucleus", "Vacuole"], correct: 1, explanation: "Chloroplasts contain chlorophyll that captures light." },
+    { q: "Which blood group is the universal donor for red blood cells?", options: ["A", "AB", "O negative", "B"], correct: 2, explanation: "O negative red cells have no A, B or Rh antigens." },
+    { q: "Which enzyme in saliva begins the digestion of starch?", options: ["Pepsin", "Amylase", "Lipase", "Trypsin"], correct: 1, explanation: "Salivary amylase breaks starch into sugars." },
+    { q: "Which part of a neuron receives incoming signals?", options: ["Axon", "Dendrite", "Synapse", "Myelin sheath"], correct: 1, explanation: "Dendrites receive signals; the axon carries them away." },
+    { q: "Mushrooms belong to which kingdom?", options: ["Plantae", "Animalia", "Fungi", "Protista"], correct: 2, explanation: "Fungi absorb nutrients and have chitin cell walls." },
+    { q: "Where does fertilisation usually occur in humans?", options: ["Uterus", "Fallopian tube", "Ovary", "Cervix"], correct: 1, explanation: "The sperm meets the egg in the fallopian tube." }
+  ],
+  hard: [
+    { q: "In DNA, adenine pairs with which base?", options: ["Guanine", "Cytosine", "Thymine", "Uracil"], correct: 2, explanation: "A–T and G–C. Uracil replaces thymine in RNA." },
+    { q: "Which type of cell division produces gametes?", options: ["Mitosis", "Meiosis", "Binary fission", "Budding"], correct: 1, explanation: "Meiosis halves the chromosome number." },
+    { q: "Which hormone lowers blood glucose levels?", options: ["Glucagon", "Insulin", "Adrenaline", "Thyroxine"], correct: 1, explanation: "Insulin from the pancreas helps cells take up glucose." },
+    { q: "Where in the cell does the Krebs cycle take place?", options: ["Cytoplasm", "Mitochondrial matrix", "Nucleus", "Ribosome"], correct: 1, explanation: "The Krebs cycle runs in the mitochondrial matrix." },
+    { q: "In a cross between two heterozygous plants (Tt × Tt), what fraction of offspring is tt?", options: ["0%", "25%", "50%", "75%"], correct: 1, explanation: "A Punnett square gives TT : Tt : tt = 1 : 2 : 1." },
+    { q: "Which structures in leaves control gas exchange?", options: ["Xylem", "Stomata", "Cuticle", "Phloem"], correct: 1, explanation: "Stomata open and close, controlled by guard cells." }
+  ],
+  veryHard: [
+    { q: "Which molecule is the immediate energy currency of the cell?", options: ["DNA", "ATP", "NADH", "Glucose"], correct: 1, explanation: "ATP releases energy when its terminal phosphate is removed." },
+    { q: "Which enzyme builds mRNA from a DNA template during transcription?", options: ["DNA polymerase", "RNA polymerase", "Ligase", "Helicase"], correct: 1, explanation: "RNA polymerase reads DNA and assembles the mRNA strand." },
+    { q: "Vaccination gives which type of immunity?", options: ["Innate", "Passive", "Active acquired", "None"], correct: 2, explanation: "The body makes its own antibodies and memory cells." },
+    { q: "Where in the nephron does ultrafiltration occur?", options: ["Loop of Henle", "Glomerulus / Bowman's capsule", "Collecting duct", "Distal tubule"], correct: 1, explanation: "Blood pressure in the glomerulus forces small molecules into the capsule." },
+    { q: "A mutation where one base is replaced by another is called a...", options: ["Frameshift mutation", "Point (substitution) mutation", "Deletion", "Translocation"], correct: 1, explanation: "A single base swap is a point mutation." }
+  ]
+};
+ 
+const CS_QUESTIONS = {
+  easy: [
+    { q: "Which of these is an operating system?", options: ["Chrome", "Windows", "Excel", "Python"], correct: 1, explanation: "Windows manages hardware and software on a computer." },
+    { q: "How many bits are in one byte?", options: ["4", "8", "16", "10"], correct: 1, explanation: "1 byte = 8 bits." },
+    { q: "Which of these is a programming language?", options: ["HTTP", "Python", "USB", "RAM"], correct: 1, explanation: "Python is a popular programming language." },
+    { q: "What does RAM stand for?", options: ["Random Access Memory", "Read Access Memory", "Run All Memory", "Rapid Active Module"], correct: 0, explanation: "RAM is the computer's short-term working memory." },
+    { q: "What does 'CPU' stand for?", options: ["Central Processing Unit", "Computer Personal Unit", "Central Program Utility", "Control Processing Unit"], correct: 0, explanation: "The CPU executes instructions." }
+  ],
+  medium: [
+    { q: "What is the decimal number 10 in binary?", options: ["1001", "1010", "1100", "1110"], correct: 1, explanation: "10 = 8 + 2 = 1010." },
+    { q: "What does SQL stand for?", options: ["Structured Query Language", "Simple Question Logic", "Sequential Query Link", "Stored Query Language"], correct: 0, explanation: "SQL is used to query and manage databases." },
+    { q: "What is the result of 7 % 3 in most programming languages?", options: ["2", "1", "0", "3"], correct: 1, explanation: "% is the remainder operator: 7 = 2×3 + 1." },
+    { q: "Which HTML tag creates a hyperlink?", options: ["<link>", "<a>", "<href>", "<url>"], correct: 1, explanation: "The anchor tag <a href=\"...\"> makes a link." },
+    { q: "Which sorting algorithm repeatedly swaps adjacent elements that are in the wrong order?", options: ["Merge sort", "Bubble sort", "Quick sort", "Heap sort"], correct: 1, explanation: "Bubble sort lets larger values 'bubble' to the end." },
+    { q: "Which data structure follows Last-In, First-Out (LIFO)?", options: ["Queue", "Stack", "Array", "Tree"], correct: 1, explanation: "Like a stack of plates, the last item added is the first removed." }
+  ],
+  hard: [
+    { q: "What is the worst-case time complexity of linear search?", options: ["O(1)", "O(log n)", "O(n)", "O(n log n)"], correct: 2, explanation: "You may have to check every element once." },
+    { q: "What is the binary number 1011 in decimal?", options: ["9", "10", "11", "13"], correct: 2, explanation: "8 + 0 + 2 + 1 = 11." },
+    { q: "Which sorting algorithm has O(n log n) time in the average and worst case?", options: ["Bubble sort", "Merge sort", "Insertion sort", "Selection sort"], correct: 1, explanation: "Merge sort always splits and merges in O(n log n)." },
+    { q: "What must every recursive function have to avoid infinite recursion?", options: ["A base case", "A global variable", "A loop", "A pointer"], correct: 0, explanation: "The base case stops the recursion." },
+    { q: "Which of these is a NoSQL database?", options: ["MySQL", "MongoDB", "PostgreSQL", "Oracle SQL"], correct: 1, explanation: "MongoDB stores documents instead of relational tables." },
+    { q: "What does DNS do?", options: ["Translates domain names to IP addresses", "Encrypts email", "Compresses files", "Blocks viruses"], correct: 0, explanation: "DNS is like the internet's phone book." },
+    { q: "What is hexadecimal F in decimal?", options: ["10", "14", "15", "16"], correct: 2, explanation: "Hex digits A–F stand for 10–15, so F = 15." }
+  ],
+  veryHard: [
+    { q: "What does this Python expression output: print(2 ** 3 ** 2)?", options: ["64", "512", "36", "256"], correct: 1, explanation: "** is right-associative: 3 ** 2 = 9, then 2 ** 9 = 512." },
+    { q: "What is the amortised time complexity of appending to a dynamic array?", options: ["O(n)", "O(1)", "O(log n)", "O(n²)"], correct: 1, explanation: "Occasional resizes are spread out, so the average append is O(1)." },
+    { q: "Which data structure does Breadth-First Search (BFS) use?", options: ["Stack", "Queue", "Heap", "Hash table"], correct: 1, explanation: "BFS explores level by level using a queue." },
+    { q: "What is the height (in edges) of a perfect binary tree with 15 nodes?", options: ["2", "3", "4", "5"], correct: 1, explanation: "1 + 2 + 4 + 8 = 15 nodes across 4 levels, which is height 3." },
+    { q: "Which of these is one of the four necessary conditions for deadlock?", options: ["Mutual exclusion", "Garbage collection", "Overflow", "Caching"], correct: 0, explanation: "The four are mutual exclusion, hold and wait, no preemption and circular wait." }
+  ]
+};
+ 
+const MATH_QUESTIONS = {
+  easy: [
+    { q: "What is 15 + 27?", options: ["32", "42", "52", "41"], correct: 1, explanation: "15 + 27 = 42." },
+    { q: "How many sides does a hexagon have?", options: ["5", "6", "7", "8"], correct: 1, explanation: "Hex means six." },
+    { q: "What is 1/2 + 1/4?", options: ["2/6", "3/4", "1/6", "2/4"], correct: 1, explanation: "2/4 + 1/4 = 3/4." },
+    { q: "What is 12 squared (12²)?", options: ["124", "122", "144", "156"], correct: 2, explanation: "12 × 12 = 144." },
+    { q: "What is the square root of 81?", options: ["7", "8", "9", "11"], correct: 2, explanation: "9 × 9 = 81." }
+  ],
+  medium: [
+    { q: "Solve for x: 3x − 5 = 16", options: ["5", "6", "7", "8"], correct: 2, explanation: "3x = 21, so x = 7." },
+    { q: "What is the area of a circle with radius 7 cm (use π = 22/7)?", options: ["44 cm²", "154 cm²", "49 cm²", "308 cm²"], correct: 1, explanation: "πr² = 22/7 × 49 = 154." },
+    { q: "What is the sum of the interior angles of a pentagon?", options: ["360°", "540°", "720°", "450°"], correct: 1, explanation: "(n − 2) × 180 = 3 × 180 = 540°." },
+    { q: "Expand (a + b)².", options: ["a² + b²", "a² + 2ab + b²", "a² − 2ab + b²", "2a + 2b"], correct: 1, explanation: "(a + b)² = a² + 2ab + b²." },
+    { q: "What is the HCF of 12 and 18?", options: ["3", "9", "6", "36"], correct: 2, explanation: "The largest number dividing both is 6." },
+    { q: "What is the probability of rolling an even number on a fair die?", options: ["1/6", "1/3", "1/2", "2/3"], correct: 2, explanation: "Even outcomes are 2, 4, 6, so 3 of 6 = 1/2." }
+  ],
+  hard: [
+    { q: "What is the derivative of sin x?", options: ["cos x", "−cos x", "−sin x", "tan x"], correct: 0, explanation: "d/dx (sin x) = cos x." },
+    { q: "What are the roots of x² − 5x + 6 = 0?", options: ["1 and 6", "2 and 3", "−2 and −3", "1 and 5"], correct: 1, explanation: "(x − 2)(x − 3) = 0." },
+    { q: "What is ∫ 2x dx?", options: ["x² + C", "2x² + C", "x + C", "2 + C"], correct: 0, explanation: "The integral of 2x is x² + C." },
+    { q: "What is log₁₀(1000)?", options: ["2", "3", "10", "100"], correct: 1, explanation: "10³ = 1000." },
+    { q: "What is the sum of the first 10 natural numbers?", options: ["45", "50", "55", "100"], correct: 2, explanation: "n(n + 1)/2 = 10 × 11 / 2 = 55." },
+    { q: "What is sin 30°?", options: ["1/2", "√3/2", "1", "√2/2"], correct: 0, explanation: "sin 30° = 1/2." },
+    { q: "What is the distance between the points (0, 0) and (3, 4)?", options: ["5", "7", "12", "25"], correct: 0, explanation: "√(3² + 4²) = √25 = 5." }
+  ],
+  veryHard: [
+    { q: "What is the sum of the infinite series 1 + 1/2 + 1/4 + 1/8 + ...?", options: ["1", "2", "3", "It never ends (infinite)"], correct: 1, explanation: "Geometric series: a / (1 − r) = 1 / (1 − 1/2) = 2." },
+    { q: "In how many different ways can the letters of the word MATH be arranged?", options: ["12", "16", "24", "48"], correct: 2, explanation: "4! = 24." },
+    { q: "If f(x) = x³ − 3x, what is f'(2)?", options: ["3", "6", "9", "12"], correct: 2, explanation: "f'(x) = 3x² − 3, so f'(2) = 12 − 3 = 9." },
+    { q: "What is the discriminant of x² + 4x + 4 = 0?", options: ["0", "4", "8", "16"], correct: 0, explanation: "b² − 4ac = 16 − 16 = 0, meaning equal roots." },
+    { q: "What is the value of i² where i is the imaginary unit?", options: ["1", "−1", "i", "0"], correct: 1, explanation: "By definition, i² = −1." }
+  ]
+};
 
 export default function App() {
   const [playerName, setPlayerName] = useState('');
@@ -281,7 +462,7 @@ export default function App() {
         typeName = 'Mathematics Challenge';
       }
 
-      const randomQ = qList[Math.floor(Math.random() * qList.length)];
+      const randomQ = pickQuestion(qList);
       setCurrentQuestion({ ...randomQ, type: typeName, category: sectionId });
       setActiveModal('question');
     }
@@ -300,7 +481,7 @@ export default function App() {
         { list: MATH_QUESTIONS.veryHard, name: 'Very Hard Mathematics Challenge' }
       ];
       const randomSubj = subjectPool[Math.floor(Math.random() * subjectPool.length)];
-      const randomQ = randomSubj.list[Math.floor(Math.random() * randomSubj.list.length)];
+     const randomQ = pickQuestion(randomSubj.list);
 
       setCurrentQuestion({ ...randomQ, type: randomSubj.name, category: 'double_or_nothing', isDouble: true });
       setActiveModal('double_question');
