@@ -50,116 +50,7 @@ const WHEEL_SECTIONS = [
   { id: 'bio', label: 'BIO CHALLENGE', icon: Dna, color: '#f5f3ff', accentColor: '#7c3aed', textColor: '#5b21b6', weight: 20 }
 ];
 
-const CHEMISTRY_QUESTIONS = {
-  easy: [
-    { q: "What is the chemical formula for water?", options: ["CO2", "H2O", "NaCl", "O2"], correct: 1, explanation: "Water is composed of two hydrogen atoms and one oxygen atom (H2O)." },
-    { q: "What gas do we exhale when we breathe out?", options: ["Oxygen", "Carbon Dioxide", "Nitrogen", "Helium"], correct: 1, explanation: "Our bodies produce carbon dioxide as a byproduct of cellular respiration." },
-    { q: "What is table salt's chemical name?", options: ["Sodium Chloride", "Sugar", "Calcium Carbonate", "Hydrogen Peroxide"], correct: 0, explanation: "Table salt is chemically known as Sodium Chloride (NaCl)." }
-  ],
-  medium: [
-    { q: "What is the chemical symbol for Gold?", options: ["Ag", "Au", "Pb", "Fe"], correct: 1, explanation: "Au is the chemical symbol for gold, derived from the Latin word 'aurum'." },
-    { q: "Which gas is most abundant in Earth's atmosphere?", options: ["Oxygen", "Carbon Dioxide", "Nitrogen", "Hydrogen"], correct: 2, explanation: "Nitrogen makes up about 78% of Earth's atmosphere." },
-    { q: "What is the pH of a neutral solution like pure water at room temperature?", options: ["0", "7", "14", "5"], correct: 1, explanation: "A pH of 7 represents a perfectly neutral solution on the pH scale." }
-  ],
-  hard: [
-    { q: "Which subatomic particle carries a negative electrical charge?", options: ["Proton", "Neutron", "Electron", "Positron"], correct: 2, explanation: "Electrons are subatomic particles with a negative charge orbiting the nucleus." },
-    { q: "What process converts a solid directly into gas without becoming liquid first?", options: ["Evaporation", "Sublimation", "Condensation", "Melting"], correct: 1, explanation: "Sublimation is the transition directly from solid to gas, like dry ice." },
-    { q: "Which element has the atomic number 1?", options: ["Helium", "Hydrogen", "Carbon", "Oxygen"], correct: 1, explanation: "Hydrogen is the lightest and first element on the periodic table." }
-  ],
-  veryHard: [
-    { q: "What is the common name of sodium bicarbonate?", options: ["Washing soda", "Baking soda", "Bleaching powder", "Quicklime"], correct: 1, explanation: "Sodium bicarbonate (NaHCO3) is commonly known as baking soda." },
-    { q: "Which gas turns lime water milky when passed through it?", options: ["Oxygen", "Carbon dioxide", "Hydrogen", "Nitrogen"], correct: 1, explanation: "Carbon dioxide reacts with lime water to form insoluble calcium carbonate, turning it milky." }
-  ]
-};
-
-const PHYSICS_QUESTIONS = {
-  easy: [
-    { q: "What force pulls objects toward the center of the Earth?", options: ["Magnetism", "Friction", "Gravity", "Tension"], correct: 2, explanation: "Gravity is the fundamental force that attracts objects toward one another." },
-    { q: "Which of these is a source of natural light on Earth?", options: ["The Moon", "A Mirror", "The Sun", "A Glass Window"], correct: 2, explanation: "The Sun is a natural star that generates its own light through nuclear fusion." },
-    { q: "What happens when you drop a feather and a hammer in a vacuum?", options: ["The hammer falls faster", "The feather falls faster", "They fall at the same speed", "They float away"], correct: 2, explanation: "Without air resistance, all objects fall at exactly the same acceleration due to gravity." }
-  ],
-  medium: [
-    { q: "What is the SI unit of electrical resistance?", options: ["Volt", "Ampere", "Ohm", "Watt"], correct: 2, explanation: "The Ohm (Ω) is the standard international unit of electrical resistance." },
-    { q: "Which colour of light has the longest wavelength in the visible spectrum?", options: ["Violet", "Green", "Blue", "Red"], correct: 3, explanation: "Red light has the longest wavelength and lowest frequency in visible light." },
-    { q: "What type of energy does a stretched rubber band store?", options: ["Kinetic energy", "Elastic potential energy", "Thermal energy", "Magnetic energy"], correct: 1, explanation: "Stretching stores elastic potential energy within the material." }
-  ],
-  hard: [
-    { q: "What is the speed of light in a vacuum approximately?", options: ["300,000 km/s", "3,000 km/s", "30,000 km/s", "3,000,000 km/s"], correct: 0, explanation: "Light travels at roughly 300,000 kilometers per second in a vacuum." },
-    { q: "Which law states that every action has an equal and opposite reaction?", options: ["Newton's First Law", "Newton's Second Law", "Newton's Third Law", "Law of Gravitation"], correct: 2, explanation: "Newton's Third Law states that forces always exist in action-reaction pairs." },
-    { q: "What instrument is used to measure atmospheric pressure?", options: ["Thermometer", "Barometer", "Anemometer", "Hygrometer"], correct: 1, explanation: "A barometer is a scientific instrument used to measure atmospheric pressure." }
-  ],
-  veryHard: [
-    { q: "If you double the distance between two masses, what happens to the gravitational force between them?", options: ["It halves", "It quarters (decreases by 4 times)", "It doubles", "It quadruples"], correct: 1, explanation: "Gravitational force follows an inverse square law, so doubling distance reduces force by a factor of 4." },
-    { q: "Which mirror is used as a rear-view mirror in vehicles because it gives an erect and diminished image?", options: ["Concave mirror", "Convex mirror", "Plane mirror", "Parabolic mirror"], correct: 1, explanation: "Convex mirrors always form virtual, erect, and diminished images, providing a wider field of view." }
-  ]
-};
-
-const BIO_QUESTIONS = {
-  easy: [
-    { q: "What organ in the human body pumps blood?", options: ["Brain", "Lungs", "Heart", "Liver"], correct: 2, explanation: "The heart is a muscular organ that circulates blood throughout the body." },
-    { q: "What green pigment do plants use to absorb sunlight?", options: ["Hemoglobin", "Chlorophyll", "Melanin", "Carotene"], correct: 1, explanation: "Chlorophyll captures light energy to fuel photosynthesis in plants." },
-    { q: "How many legs does an insect have?", options: ["4", "6", "8", "10"], correct: 1, explanation: "All adult insects possess exactly six legs divided into three pairs." }
-  ],
-  medium: [
-    { q: "What is the powerhouse of the cell?", options: ["Nucleus", "Ribosome", "Mitochondria", "Golgi Body"], correct: 2, explanation: "Mitochondria generate most of the chemical energy needed to power cellular biochemical reactions." },
-    { q: "Which blood cells are responsible for carrying oxygen throughout the body?", options: ["White blood cells", "Red blood cells", "Platelets", "Plasma"], correct: 1, explanation: "Red blood cells contain hemoglobin, which binds oxygen in the lungs and delivers it." },
-    { q: "What molecule carries genetic instructions in living organisms?", options: ["RNA", "Protein", "DNA", "Lipid"], correct: 2, explanation: "DNA (Deoxyribonucleic Acid) contains the hereditary instructions for development and function." }
-  ],
-  hard: [
-    { q: "What process do plants use to convert sunlight into chemical energy?", options: ["Respiration", "Photosynthesis", "Transpiration", "Fermentation"], correct: 1, explanation: "Photosynthesis converts light energy into chemical energy using carbon dioxide and water." },
-    { q: "Which human organ is primarily responsible for detoxifying chemicals and metabolizing drugs?", options: ["Kidney", "Liver", "Pancreas", "Spleen"], correct: 1, explanation: "The liver detoxifies various metabolites, synthesizes proteins, and produces biochemicals." },
-    { q: "What is the basic structural and functional unit of all living organisms?", options: ["Atom", "Molecule", "Cell", "Tissue"], correct: 2, explanation: "The cell is recognized as the fundamental building block of all living things." }
-  ],
-  veryHard: [
-    { q: "Which part of the human brain controls balance, posture, and coordination?", options: ["Cerebrum", "Cerebellum", "Medulla oblongata", "Hypothalamus"], correct: 1, explanation: "The cerebellum coordinates voluntary movements, balance, and posture." },
-    { q: "What is the gap between two neurons where chemical messages are transmitted called?", options: ["Axon", "Synapse", "Dendrite", "Myelin sheath"], correct: 1, explanation: "A synapse is the junction through which neurons communicate using neurotransmitters." }
-  ]
-};
-
-const CS_QUESTIONS = {
-  easy: [
-    { q: "What does 'CPU' stand for in a computer?", options: ["Central Processing Unit", "Computer Personal Unit", "Central Program Utility", "Control Processing Unit"], correct: 0, explanation: "The CPU is known as the brain of the computer that executes instructions." },
-    { q: "Which of these is an example of an input device?", options: ["Monitor", "Printer", "Keyboard", "Speaker"], correct: 2, explanation: "A keyboard lets you input data and instructions into a computer." },
-    { q: "What symbol is commonly used in programming to mean 'assignment' (store value)?", options: ["==", "=", "===", "!="], correct: 1, explanation: "Single equals '=' is typically used to assign values to variables." }
-  ],
-  medium: [
-    { q: "Which data structure follows the Last-In, First-Out (LIFO) principle?", options: ["Queue", "Stack", "Array", "Tree"], correct: 1, explanation: "A stack operates like a stack of plates where the last item added is the first removed." },
-    { q: "What does HTML stand for?", options: ["Hyper Text Markup Language", "High Tech Multi Language", "Hyper Transfer Machine Language", "Home Tool Markup Language"], correct: 0, explanation: "HTML is the standard markup language for creating web pages." },
-    { q: "Which of these is a compiled programming language?", options: ["Python", "JavaScript", "C++", "HTML"], correct: 2, explanation: "C++ is compiled directly into machine code before execution." }
-  ],
-  hard: [
-    { q: "What is the worst-case time complexity of standard Binary Search on a sorted array?", options: ["O(n)", "O(log n)", "O(n^2)", "O(1)"], correct: 1, explanation: "Binary search divides the search space in half each step, resulting in logarithmic time O(log n)." },
-    { q: "In object-oriented programming, what concept allows a class to inherit properties from another class?", options: ["Encapsulation", "Polymorphism", "Inheritance", "Abstractions"], correct: 2, explanation: "Inheritance enables new classes to adopt attributes and methods of existing classes." },
-    { q: "What protocol is securely used to encrypt web traffic on the internet?", options: ["HTTP", "FTP", "HTTPS", "SMTP"], correct: 2, explanation: "HTTPS (Hypertext Transfer Protocol Secure) encrypts communications using SSL/TLS." }
-  ],
-  veryHard: [
-    { q: "If a loop runs while i < 3 starting at i = 0, how many times will it execute?", options: ["2 times", "3 times", "4 times", "Infinite"], correct: 1, explanation: "It executes when i = 0, 1, and 2, which is exactly 3 times." },
-    { q: "Which of these represents a conditional statement in most programming languages?", options: ["for", "while", "if", "print"], correct: 2, explanation: "An 'if' statement is used to execute code based on whether a condition is true or false." }
-  ]
-};
-
-const MATH_QUESTIONS = {
-  easy: [
-    { q: "What is the value of 7 multiplied by 8?", options: ["54", "56", "64", "48"], correct: 1, explanation: "7 × 8 = 56." },
-    { q: "How many degrees are in a triangle's interior angles?", options: ["90°", "180°", "360°", "270°"], correct: 1, explanation: "The sum of interior angles in any triangle is always 180 degrees." },
-    { q: "What is the square root of 81?", options: ["7", "8", "9", "11"], correct: 2, explanation: "9 × 9 = 81, so the square root of 81 is 9." }
-  ],
-  medium: [
-    { q: "What is the value of Pi (π) rounded to two decimal places?", options: ["3.12", "3.14", "3.16", "3.18"], correct: 1, explanation: "Pi is approximately 3.14159..." },
-    { q: "If a circle has a radius of 5 cm, what is its diameter?", options: ["5 cm", "10 cm", "15 cm", "25 cm"], correct: 1, explanation: "The diameter is always twice the radius (2 × 5 = 10 cm)." },
-    { q: "What is 15% of 200?", options: ["15", "20", "25", "30"], correct: 3, explanation: "15% of 200 is 0.15 × 200 = 30." }
-  ],
-  hard: [
-    { q: "What is the derivative of x^2 with respect to x?", options: ["x", "2x", "x^2", "2"], correct: 1, explanation: "Using the power rule, the derivative of x^n is n*x^(n-1), so d/dx(x^2) = 2x." },
-    { q: "What is the value of 2 to the power of 5 (2^5)?", options: ["16", "32", "64", "10"], correct: 1, explanation: "2 × 2 × 2 × 2 × 2 = 32." },
-    { q: "What is the slope of the line given by equation y = 3x + 4?", options: ["4", "3", "-3", "1/3"], correct: 1, explanation: "In slope-intercept form y = mx + b, 'm' represents the slope, which is 3." }
-  ],
-  veryHard: [
-    { q: "What is the solution for x in the linear equation 2x + 6 = 14?", options: ["x = 2", "x = 4", "x = 7", "x = 10"], correct: 1, explanation: "Subtracting 6 gives 2x = 8, so x = 4." },
-    { q: "What is the area of a rectangle with length 8 cm and breadth 5 cm?", options: ["13 sq cm", "26 sq cm", "40 sq cm", "80 sq cm"], correct: 2, explanation: "Area = length × breadth = 8 × 5 = 40 sq cm." }
-  ]
-};
-      const usedQuestions = new Set();
+const usedQuestions = new Set();
 function pickQuestion(list) {
   let pool = list.filter(q => !usedQuestions.has(q.q));
   if (pool.length === 0) {
@@ -171,7 +62,7 @@ function pickQuestion(list) {
   const order = q.options.map((_, i) => i).sort(() => Math.random() - 0.5);
   return { ...q, options: order.map(i => q.options[i]), correct: order.indexOf(q.correct) };
 }
- 
+
 const CHEMISTRY_QUESTIONS = {
   easy: [
     { q: "What is the chemical formula for water?", options: ["CO2", "H2O", "NaCl", "O2"], correct: 1, explanation: "Water is two hydrogen atoms and one oxygen atom (H2O)." },
@@ -205,7 +96,7 @@ const CHEMISTRY_QUESTIONS = {
     { q: "What is the IUPAC name of CH3CH2OH?", options: ["Methanol", "Ethanol", "Propanol", "Ethanal"], correct: 1, explanation: "Two carbons with an -OH group make ethanol." }
   ]
 };
- 
+
 const PHYSICS_QUESTIONS = {
   easy: [
     { q: "What is the SI unit of force?", options: ["Joule", "Newton", "Watt", "Pascal"], correct: 1, explanation: "Force is measured in newtons (N)." },
@@ -239,7 +130,7 @@ const PHYSICS_QUESTIONS = {
     { q: "Which of these is a longitudinal wave?", options: ["Light", "Sound", "Radio waves", "X-rays"], correct: 1, explanation: "Sound is a compression wave; the others are transverse electromagnetic waves." }
   ]
 };
- 
+
 const BIO_QUESTIONS = {
   easy: [
     { q: "Which gas do humans need to breathe in to survive?", options: ["Nitrogen", "Oxygen", "Carbon dioxide", "Helium"], correct: 1, explanation: "Cells use oxygen to release energy from food." },
@@ -272,7 +163,7 @@ const BIO_QUESTIONS = {
     { q: "A mutation where one base is replaced by another is called a...", options: ["Frameshift mutation", "Point (substitution) mutation", "Deletion", "Translocation"], correct: 1, explanation: "A single base swap is a point mutation." }
   ]
 };
- 
+
 const CS_QUESTIONS = {
   easy: [
     { q: "Which of these is an operating system?", options: ["Chrome", "Windows", "Excel", "Python"], correct: 1, explanation: "Windows manages hardware and software on a computer." },
@@ -306,7 +197,7 @@ const CS_QUESTIONS = {
     { q: "Which of these is one of the four necessary conditions for deadlock?", options: ["Mutual exclusion", "Garbage collection", "Overflow", "Caching"], correct: 0, explanation: "The four are mutual exclusion, hold and wait, no preemption and circular wait." }
   ]
 };
- 
+
 const MATH_QUESTIONS = {
   easy: [
     { q: "What is 15 + 27?", options: ["32", "42", "52", "41"], correct: 1, explanation: "15 + 27 = 42." },
@@ -481,7 +372,7 @@ export default function App() {
         { list: MATH_QUESTIONS.veryHard, name: 'Very Hard Mathematics Challenge' }
       ];
       const randomSubj = subjectPool[Math.floor(Math.random() * subjectPool.length)];
-     const randomQ = pickQuestion(randomSubj.list);
+      const randomQ = pickQuestion(randomSubj.list);
 
       setCurrentQuestion({ ...randomQ, type: randomSubj.name, category: 'double_or_nothing', isDouble: true });
       setActiveModal('double_question');
@@ -676,7 +567,7 @@ export default function App() {
                   <span className="font-bold text-emerald-600">+1 Extra Spin</span>
                 </div>
                 <div className="flex justify-between items-center text-sm">
-                 
+                  <span className="text-slate-500">Candy Limit:</span>
                   <span className="font-bold text-rose-600">{candyCap}{hadJackpot ? ' (Jackpot!)' : ''}</span>
                 </div>
               </div>
@@ -792,7 +683,7 @@ export default function App() {
                 <Trophy className="w-10 h-10" />
               </div>
               <h3 className="text-3xl font-black text-amber-600 mb-2">JACKPOT!</h3>
-              <p className="text-slate-600 mb-6 font-medium">Lucky you! Your candy just went up.</p>
+              <p className="text-slate-600 mb-6 font-medium">Lucky you! Your candy limit just went up.</p>
               
               <div className="bg-rose-50 border border-rose-200 rounded-2xl p-4 mb-6 flex items-center justify-center gap-3">
                 <Candy className="w-8 h-8 text-rose-500 animate-bounce" />
